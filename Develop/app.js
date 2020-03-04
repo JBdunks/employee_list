@@ -1,35 +1,177 @@
+const inquirer = require("inquirer");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const inquirer = require("inquirer");
-const path = require("path");
-const fs = require("fs");
-​
-const OUTPUT_DIR = path.resolve(__dirname, "output")
-const outputPath = path.join(OUTPUT_DIR, "team.html");
-​
-const render = require("./lib/htmlRenderer");
-​
-​
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-​
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-​
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-​
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-​
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an 
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work!```
+
+const employeeList = [];
+
+const starter = [
+  {
+    type: "list",
+    message: "Would you like to form  a team?",
+    name: "start",
+    choices: ["Yes", "No"]
+  }
+];
+// gets employee type
+const nextEmployee = [
+  {
+    type: "list",
+    message: "What kind of employee would you like to enter?",
+    name: "empType",
+    choices: ["Engineer", "Intern"]
+  }
+];
+const anotherEmp = [
+  {
+    type: "list",
+    message: "Would you like to add another Employee?",
+    name: "another",
+    choices: ["Yes", "No"]
+  }
+];
+// manager specific questions
+const nextManager = [
+  {
+    type: "input",
+    message: "Manager Name:",
+    name: "name"
+  },
+  {
+    type: "input",
+    message: " Manager ID number:",
+    name: "id"
+  },
+  {
+    type: "input",
+    message: " Manager Email Address:",
+    name: "email"
+  },
+  {
+    type: "input",
+    message: " Manager Phone Number:",
+    name: "officeNumber"
+  }
+];
+
+//intern questions
+const nextIntern = [
+  {
+    type: "input",
+    message: "Intern Name:",
+    name: "name"
+  },
+  {
+    type: "input",
+    message: " InternID number:",
+    name: "id"
+  },
+  {
+    type: "input",
+    message: " Intern Email Address:",
+    name: "email"
+  },
+  {
+    type: "input",
+    message: "Intern School:",
+    name: "school"
+  }
+];
+
+//engineer questions
+const nextEngineer = [
+  {
+    type: "input",
+    message: "Engineer Name:",
+    name: "name"
+  },
+  {
+    type: "input",
+    message: "Engineer ID number:",
+    name: "id"
+  },
+  {
+    type: "input",
+    message: "Engineer Email Address:",
+    name: "email"
+  },
+  {
+    type: "input",
+    message: "Engineer GitHub:",
+    name: "github"
+  }
+];
+//make manager
+function makeManager() {
+  inquirer.prompt(nextManager).then(function(answers) {
+    let newManager = new Manager(
+      answers.name,
+      answers.id,
+      answers.email,
+      answers.officeNumber
+    );
+    employeeList.push(newManager);
+    employeeType();
+  });
+}
+//make engineer
+function makeEngineer() {
+  inquirer.prompt(nextEngineer).then(function(answers) {
+    let newEngineer = new Engineer(
+      answers.name,
+      answers.id,
+      answers.email,
+      answers.github
+    );
+    employeeList.push(newEngineer);
+    another();
+  });
+}
+//make intern
+function makeIntern() {
+  inquirer.prompt(nextIntern).then(function(answers) {
+    let newIntern = new Intern(
+      answers.name,
+      answers.id,
+      answers.email,
+      answers.school
+    );
+    employeeList.push(newIntern);
+    another();
+  });
+}
+
+/// determine type of employee
+function employeeType() {
+  inquirer.prompt(nextEmployee).then(function(answers) {
+    console.log(answers.empType);
+
+    if (answers.empType === "Intern") {
+      makeIntern();
+    } else {
+      makeEngineer();
+    }
+  });
+}
+//start it off!!
+function start() {
+  inquirer.prompt(starter).then(function(answers) {
+    if (answers.start === "Yes") {
+      makeManager();
+    } else {
+      console.log("Maybe some other time.");
+    }
+  });
+}
+//add another emplyee
+function another() {
+  inquirer.prompt(anotherEmp).then(function(answers) {
+    if (answers.another === "Yes") {
+      employeeType();
+    } else {
+      console.log(employeeList);
+    }
+  });
+}
+
+start();
