@@ -2,7 +2,15 @@ const inquirer = require("inquirer");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
+const path = require("path");
+const fs = require("fs");
+//this leads to directory named output
+const OUTPUT_DIR = path.resolve(__dirname, "output");
+//this is goes into "output" and writes the file team.html
+const outputPath = path.join(OUTPUT_DIR, "team.html");
+const render = require("./lib/htmlRenderer");
 
+//array where employees get added
 const employeeList = [];
 
 const starter = [
@@ -13,7 +21,7 @@ const starter = [
     choices: ["Yes", "No"]
   }
 ];
-// gets employee type
+//choose employee type
 const nextEmployee = [
   {
     type: "list",
@@ -22,6 +30,7 @@ const nextEmployee = [
     choices: ["Engineer", "Intern"]
   }
 ];
+//add another employee
 const anotherEmp = [
   {
     type: "list",
@@ -169,6 +178,12 @@ function another() {
     if (answers.another === "Yes") {
       employeeType();
     } else {
+      var team = render(employeeList);
+
+      fs.writeFile(outputPath, team, function(err) {
+        if (err) throw err;
+      });
+
       console.log(employeeList);
     }
   });

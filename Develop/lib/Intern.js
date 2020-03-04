@@ -6,20 +6,11 @@ class Intern extends Employee {
     this.school = school;
   }
   getSchool() {
-    console.log(this.school);
     return this.school;
   }
   getRole() {
-    console.log("Intern");
     return "Intern";
   }
 }
-/*
-const int = new Intern("guy", 22, "email", "School of Hard Knocks");
-
-int.getRole();
-console.log(int);
-int.getSchool();
-*/
 
 module.exports = Intern;
